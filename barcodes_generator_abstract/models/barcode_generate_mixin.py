@@ -33,6 +33,19 @@ class BarcodeGenerateMixin(models.AbstractModel):
         string='Generate Type', selection=_GENERATE_TYPE, readonly=True,
         related='barcode_rule_id.generate_type')
 
+    @api.multi
+    def write(self, vals):
+        """
+        If the barcode rule is changed, reset the barcode_base
+        :param vals:
+        :return:
+        """
+        res = super(BarcodeGenerateMixin, self).write(vals)
+        if 'barcode_rule_id' in vals:
+            for item in self:
+                item.barcode_base = 0
+        return res
+
     @api.model
     def create(self, vals):
         """It creates a new barcode if automation is active."""
