@@ -9,11 +9,8 @@
         <field name="inherit_id" ref="stock.view_location_form" />
         <field name="arch" type="xml">
             <group name="additional_info" position="after">
-                <!-- This view is handled by fields_view_get method of
-                    stock location to add the barcode field to the view
-                    in case it has not been added by the stock_barcodes
-                    module. -->
                 <group name="barcodes_generator_location" string="Barcode">
+                    <field name="barcode" />
                     <field
                         name="barcode_rule_id"
                         domain="[('generate_model', '=', 'stock.location')]"
