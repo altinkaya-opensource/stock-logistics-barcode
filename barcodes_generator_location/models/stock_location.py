@@ -14,35 +14,64 @@ class StockLocation(models.Model):
 
     @api.model
     def get_view(self, view_id=None, view_type="form", **options):
-        """The redefinition of this method is intended to manipulating
-        the form view of stock.location to add the barcode field to the
-        view in case it has not been added by the stock_barcodes module.
+        """Add readonly modifier to barcode field and handle stock_barcodes compatibility.
+
+        If stock_barcodes module is installed, it adds a separate barcode group.
+        We merge our generator fields into their group and remove our duplicate group.
         """
         result = super().get_view(view_id=view_id, view_type=view_type, **options)
-        if view_type == "form":
-            doc = etree.XML(result["arch"])
-            barcode_field = doc.xpath("//field[@name='barcode']")
-            if barcode_field:
-                # If the field exists in the view, it's assumed it has
-                # been added by 'stock_barcodes' module, then all the
-                # fields inside 'barcodes_generator_location' group
-                # (added by this module) are moved next to the existing
-                # `barcode' field.
-                barcode_field = barcode_field[0]
-                group = doc.xpath("//group[@name='barcodes_generator_location']")[0]
-                for node in group.getchildren()[::-1]:
-                    barcode_field.addnext(node)
-                # Remove the group since it will be empty at this point.
-                group.getparent().remove(group)
+
+        if view_type != "form":
+            return result
+
+        doc = etree.XML(result["arch"])
+
+        # Find stock_barcodes group (if exists)
+        stock_barcodes_group = doc.xpath("//group[@name='barcode']")
+        our_group = doc.xpath("//group[@name='barcodes_generator_location']")
+
+        if not our_group:
+            # Our group is not in the view (might be filtered by groups permission)
+            return result
+
+        our_group = our_group[0]
+
+        if stock_barcodes_group:
+            # stock_barcodes module is installed
+            # Move our generator fields to their barcode group and remove our duplicate barcode field
+            stock_barcodes_group = stock_barcodes_group[0]
+            stock_barcodes_barcode_field = doc.xpath("//group[@name='barcode']//field[@name='barcode']")
+
+            if stock_barcodes_barcode_field:
+                stock_barcodes_barcode_field = stock_barcodes_barcode_field[0]
+
+                # Move all our fields (except barcode) to stock_barcodes group
+                for child in list(our_group):
+                    if child.tag == 'field' and child.get('name') == 'barcode':
+                        # Skip our duplicate barcode field
+                        continue
+                    # Move other fields/buttons after stock_barcodes' barcode field
+                    stock_barcodes_barcode_field.addnext(child)
+
+                # Remove our now-empty group
+                our_group.getparent().remove(our_group)
+
+                # Use stock_barcodes' barcode field for modifier
+                barcode_field = stock_barcodes_barcode_field
             else:
-                # If the field does not exist in the view, it is added
-                # together with the fields that this module adds.
-                barcode_field = etree.Element("field", {"name": "barcode"})
-                placeholder = doc.xpath("//field[@name='barcode_rule_id']")[0]
-                placeholder.addprevious(barcode_field)
-            # To the `barcode` field in the view (either the new
-            # or the existing one), a modifier is added.
+                # Unexpected: stock_barcodes group exists but has no barcode field
+                # Use our barcode field
+                barcode_field = doc.xpath("//group[@name='barcodes_generator_location']//field[@name='barcode']")
+                barcode_field = barcode_field[0] if barcode_field else None
+        else:
+            # stock_barcodes module is NOT installed, use our barcode field
+            barcode_field = doc.xpath("//group[@name='barcodes_generator_location']//field[@name='barcode']")
+            barcode_field = barcode_field[0] if barcode_field else None
+
+        # Add readonly modifier to barcode field
+        if barcode_field is not None:
             modifier = {"readonly": [("generate_type", "=", "sequence")]}
             barcode_field.set("modifiers", json.dumps(modifier))
-            result["arch"] = etree.tostring(doc)
+
+        result["arch"] = etree.tostring(doc)
         return result
