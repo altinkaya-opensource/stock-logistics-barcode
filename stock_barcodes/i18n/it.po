@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-09-09 11:42+0000\n"
+"PO-Revision-Date: 2026-04-20 15:45+0000\n"
 "Last-Translator: mymage <stefano.consolaro@mymage.it>\n"
 "Language-Team: none\n"
 "Language: it\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.10.4\n"
+"X-Generator: Weblate 5.15.2\n"
 
 #. module: stock_barcodes
 #: model:ir.model.fields,help:stock_barcodes.field_wiz_candidate_picking__state
@@ -176,6 +176,12 @@ msgstr ""
 "<span class=\"fa fa-archive d-sm-none oe_span_small_icon\" "
 "title=\"Ubicazione origine\" attrs=\"{'invisible': "
 "[('product_packaging_ids', '=', [])]}\"/>"
+
+#. module: stock_barcodes
+#: model_terms:ir.ui.view,arch_db:stock_barcodes.view_stock_barcodes_read_form
+msgid "<span class=\"fa fa-barcode fa-2x mt-2 mx-3\" title=\"Barcode\"/>"
+msgstr ""
+"<span class=\"fa fa-barcode fa-2x mt-2 mx-3\" title=\"codice a barre\"/>"
 
 #. module: stock_barcodes
 #: model_terms:ir.ui.view,arch_db:stock_barcodes.view_stock_barcodes_todo_kanban
@@ -378,6 +384,16 @@ msgid "Barcode Option Group"
 msgstr "Gruppo opzione codice a barre"
 
 #. module: stock_barcodes
+#. odoo-python
+#: code:addons/stock_barcodes/models/stock_picking.py:0
+#, python-format
+msgid ""
+"Barcode Option Group is not configured on Operation Type '%(pick_type)s'."
+msgstr ""
+"Il gruppo opzione codice a barre non è configurato nel tipo operazione '%"
+"(pick_type)s'."
+
+#. module: stock_barcodes
 #: model_terms:ir.ui.view,arch_db:stock_barcodes.view_pickingtype_filter
 msgid "Barcode Options"
 msgstr "Opzioni codice a barre"
@@ -389,7 +405,7 @@ msgstr "Opzioni codice a barre"
 #: model:ir.model.fields,field_description:stock_barcodes.field_wiz_stock_barcodes_read_inventory___barcode_scanned
 #: model:ir.model.fields,field_description:stock_barcodes.field_wiz_stock_barcodes_read_picking___barcode_scanned
 msgid "Barcode Scanned"
-msgstr "Barcode scansionato"
+msgstr "Codice a barre letto"
 
 #. module: stock_barcodes
 #. odoo-javascript
@@ -527,6 +543,11 @@ msgstr "Prelievi candidati"
 #: model:ir.model,name:stock_barcodes.model_wiz_candidate_picking
 msgid "Candidate pickings for barcode interface"
 msgstr "Prelievi candidati per interfaccia codice a barre"
+
+#. module: stock_barcodes
+#: model:ir.model.fields,field_description:stock_barcodes.field_wiz_stock_barcodes_read_picking__candidate_picking_id
+msgid "Candidate stock picking"
+msgstr "Candida prelievo magazzino"
 
 #. module: stock_barcodes
 #: model_terms:ir.ui.view,arch_db:stock_barcodes.view_stock_barcodes_todo_kanban
@@ -1001,7 +1022,7 @@ msgstr "Interno"
 #. module: stock_barcodes
 #: model:stock.barcodes.action,name:stock_barcodes.stock_barcodes_action_inventory
 msgid "Inventory"
-msgstr "Magazzino"
+msgstr "Inventario"
 
 #. module: stock_barcodes
 #: model:ir.model.fields,field_description:stock_barcodes.field_wiz_stock_barcodes_read_inventory__inventory_quant_ids
@@ -1485,7 +1506,6 @@ msgstr "Movimenti in sospeso"
 
 #. module: stock_barcodes
 #: model:ir.model.fields,field_description:stock_barcodes.field_wiz_candidate_picking__picking_id
-#: model:ir.model.fields,field_description:stock_barcodes.field_wiz_stock_barcodes_read_picking__candidate_picking_id
 #: model:ir.model.fields,field_description:stock_barcodes.field_wiz_stock_barcodes_read_picking__picking_id
 msgid "Picking"
 msgstr "Prelievo"
