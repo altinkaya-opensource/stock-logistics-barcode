@@ -38,16 +38,18 @@ class StockLocation(models.Model):
 
         if stock_barcodes_group:
             # stock_barcodes module is installed
-            # Move our generator fields to their barcode group and remove our duplicate barcode field
+            # Move generator fields to their group and remove our duplicate barcode.
             stock_barcodes_group = stock_barcodes_group[0]
-            stock_barcodes_barcode_field = doc.xpath("//group[@name='barcode']//field[@name='barcode']")
+            stock_barcodes_barcode_field = doc.xpath(
+                "//group[@name='barcode']//field[@name='barcode']"
+            )
 
             if stock_barcodes_barcode_field:
                 stock_barcodes_barcode_field = stock_barcodes_barcode_field[0]
 
                 # Move all our fields (except barcode) to stock_barcodes group
                 for child in list(our_group):
-                    if child.tag == 'field' and child.get('name') == 'barcode':
+                    if child.tag == "field" and child.get("name") == "barcode":
                         # Skip our duplicate barcode field
                         continue
                     # Move other fields/buttons after stock_barcodes' barcode field
@@ -61,11 +63,15 @@ class StockLocation(models.Model):
             else:
                 # Unexpected: stock_barcodes group exists but has no barcode field
                 # Use our barcode field
-                barcode_field = doc.xpath("//group[@name='barcodes_generator_location']//field[@name='barcode']")
+                barcode_field = doc.xpath(
+                    "//group[@name='barcodes_generator_location']//field[@name='barcode']"
+                )
                 barcode_field = barcode_field[0] if barcode_field else None
         else:
             # stock_barcodes module is NOT installed, use our barcode field
-            barcode_field = doc.xpath("//group[@name='barcodes_generator_location']//field[@name='barcode']")
+            barcode_field = doc.xpath(
+                "//group[@name='barcodes_generator_location']//field[@name='barcode']"
+            )
             barcode_field = barcode_field[0] if barcode_field else None
 
         # Add readonly modifier to barcode field
